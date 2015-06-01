@@ -32,12 +32,12 @@ ul {
 }
 
 ul li {
-    background: #f5f5f5;
+    background: #C9C9C9;
     padding: 10px;
 }
 
 ul li:nth-child(odd) {
-    background: #fff;
+    background: #AEACAC;
 }
 
 form input {

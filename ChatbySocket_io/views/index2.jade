@@ -9,7 +9,7 @@ html
 		div.container
 			h1 Chat Application
 			div#chat-box
-				textarea(id="chatboard" readonly="readonly" rows='10' cols='50' style='resize:none;')
+				div#chatboard
 					ul
 				form(action='')
 					input(type="text", id="message", autocomplete="off")
@@ -18,9 +18,9 @@ html
 			$(document).ready(function() {
 				$('#chatboard').text(""); 
 				var name = prompt("Please enter your name?", ""); // รับ input ค่า name
-				wsUri = 'http://' + (document.location.host) + ':9999'; // เขียนurlติดต่อไปยัง server ในพอร์ต 9999
+				wsUri = 'http://' + (document.location.host) + ':7777'; // เขียนurlติดต่อไปยัง server ในพอร์ต 7777
 				var socket = io.connect(wsUri); // ทำการติดต่อ
-				socket.emit('sendName', {name: name.trim()}); // ส่งชื่อผ่านท่อ sendName ไป
+				socket.emit('sendName	', {name: name.trim()}); // ส่งชื่อผ่านท่อ sendName ไป
 				socket.on('sendName', function(data) { // ถ้ามีการส่งข้อมูลผ่าน ท่อ sendName 
 					$('#chatboard').append(data.name.trim() + "\r\n"); // เอาค่าที่ได้มาใส่ใน textarea
 				});

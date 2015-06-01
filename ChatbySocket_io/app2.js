@@ -26,6 +26,7 @@ app.get('/',function(req,res){
 // ทำการรับ event ที่ชื่อ connection
 // ทำการรับ event ที่ชื่อ sendMsg ชื่อเดียวกันกับฝั่ง client
 io.on('connection', function(socket) {
+    console.log('client');
 	var ipv4 = socket.request.socket.remoteAddress; // เก็บ ip address ของผู้เข้าห้องแชต
     socket.on('sendMsg', function(data) {
         if(data.message === '' || data.message === null) { // ถ้า message เป็นค่าว่าง หรือไม่มีค่า
@@ -41,6 +42,7 @@ io.on('connection', function(socket) {
         }
     });
     socket.on('sendName', function(data) {// เมื่อมีการส่งข้อมูลจาก client ผ่านท่อ 'sendName'
+        console.log('client1');
         if (data.name === "" || data.name === null) {//ตรวจสอบข้อมูลว่าง
             socket.disconnect(); // ถ้าว่างให้ disconnect
         } else {
