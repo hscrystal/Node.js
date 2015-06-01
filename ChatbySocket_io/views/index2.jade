@@ -1,0 +1,46 @@
+doctype html
+html
+	head
+		title Chat Application
+		link(rel='stylesheet', href='css/main.css')
+		script(src="https://cdn.socket.io/socket.io-1.3.5.js")
+		script(src="http://code.jquery.com/jquery-2.1.4.min.js")
+	body
+		div.container
+			h1 Chat Application
+			div#chat-box
+				textarea(id="chatboard" readonly="readonly" rows='10' cols='50' style='resize:none;')
+					ul
+				form(action='')
+					input(type="text", id="message", autocomplete="off")
+					button Send
+		script.
+			$(document).ready(function() {
+				$('#chatboard').text(""); 
+				var name = prompt("Please enter your name?", ""); // รับ input ค่า name
+				wsUri = 'http://' + (document.location.host) + ':9999'; // เขียนurlติดต่อไปยัง server ในพอร์ต 9999
+				var socket = io.connect(wsUri); // ทำการติดต่อ
+				socket.emit('sendName', {name: name.trim()}); // ส่งชื่อผ่านท่อ sendName ไป
+				socket.on('sendName', function(data) { // ถ้ามีการส่งข้อมูลผ่าน ท่อ sendName 
+					$('#chatboard').append(data.name.trim() + "\r\n"); // เอาค่าที่ได้มาใส่ใน textarea
+				});
+				socket.on('sendMsg', function(data) {
+					$('#chatboard').append(data.message.trim() + "\r\n");
+				});
+				socket.on('disconnected', function(data) {
+					$('#chatboard').append(data.name.trim() + "'s Disconnect\r\n");
+				});
+				$('#messagebox').keypress(function(evt) {// กรณีที่มีการกดปุ่ม
+					if (event.which === 13) { // ถ้าเป็นปุ่ม enter ให้ส่งข้อมูลไปยัง server
+						var message = $('#messagebox').val();
+						$('#messagebox').val(""); // clear ค่าในช่องใส่ข้อความ
+						socket.emit('sendMsg', {message: message});
+					}
+				});
+				$('#button').click(function() { // มีผลเหมือนกับฟังชั่น keypress เพียงแต่เป็นการคลิ๊กปุ่ม
+					var message = $('#messagebox').val();
+					$('#messagebox').val("");
+					socket.emit('sendMsg', {message: message});
+				});
+				
+			});
