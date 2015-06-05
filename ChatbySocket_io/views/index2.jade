@@ -12,35 +12,28 @@ html
 				div#chatboard
 					ul
 				form(action='')
-					input(type="text", id="message", autocomplete="off")
+					input(type="text", id="messagebox", autocomplete="off")
 					button Send
 		script.
 			$(document).ready(function() {
 				$('#chatboard').text(""); 
-				var name = prompt("Please enter your name?", ""); // รับ input ค่า name
-				wsUri = 'http://' + (document.location.host) + ':7777'; // เขียนurlติดต่อไปยัง server ในพอร์ต 7777
-				var socket = io.connect(wsUri); // ทำการติดต่อ
-				socket.emit('sendName	', {name: name.trim()}); // ส่งชื่อผ่านท่อ sendName ไป
-				socket.on('sendName', function(data) { // ถ้ามีการส่งข้อมูลผ่าน ท่อ sendName 
-					$('#chatboard').append(data.name.trim() + "\r\n"); // เอาค่าที่ได้มาใส่ใน textarea
+				var name = prompt("Please enter your name?", "");
+				wsUri = 'http://' + (document.location.host) + ':7777';
+				var socket = io.connect(wsUri);
+				alert(JSON.stringify({'name' : name.trim()}));
+				socket.emit('sendName', {name : name.trim()});
+				socket.on('sendName', function(data) {
+					$('#chatboard').append(data.name.trim() + "\r\n"); 
 				});
 				socket.on('sendMsg', function(data) {
 					$('#chatboard').append(data.message.trim() + "\r\n");
 				});
 				socket.on('disconnected', function(data) {
-					$('#chatboard').append(data.name.trim() + "'s Disconnect\r\n");
+					$('#chat-box ul').append($('<li>').text(data.message.trim() +" 's "+"Disconnect"));
 				});
-				$('#messagebox').keypress(function(evt) {// กรณีที่มีการกดปุ่ม
-					if (event.which === 13) { // ถ้าเป็นปุ่ม enter ให้ส่งข้อมูลไปยัง server
-						var message = $('#messagebox').val();
-						$('#messagebox').val(""); // clear ค่าในช่องใส่ข้อความ
-						socket.emit('sendMsg', {message: message});
-					}
-				});
-				$('#button').click(function() { // มีผลเหมือนกับฟังชั่น keypress เพียงแต่เป็นการคลิ๊กปุ่ม
+				$('form').submit(function(){
 					var message = $('#messagebox').val();
-					$('#messagebox').val("");
+					$('#messagebox').val('');
 					socket.emit('sendMsg', {message: message});
 				});
-				
 			});
